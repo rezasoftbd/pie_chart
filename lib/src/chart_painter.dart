@@ -34,30 +34,29 @@ class PieChartPainter extends CustomPainter {
 
   double get drawPercentage => degreeOptions.totalDegrees / fullDegree;
 
-  PieChartPainter(
-    double angleFactor,
-    this.showChartValues,
-    this.showChartValuesOutside,
-    List<Color> colorList, {
-    this.chartValueStyle,
-    this.chartValueBackgroundColor,
-    required List<double> values,
-    List<String>? titles,
-    this.showValuesInPercentage,
-    this.decimalPlaces,
-    this.showChartValueLabel,
-    this.chartType,
-    this.centerText,
-    this.centerTextStyle,
-    this.formatChartValues,
-    this.strokeWidth,
-    this.emptyColor,
-    this.gradientList,
-    this.emptyColorGradient,
-    this.degreeOptions = const DegreeOptions(),
-    required this.baseChartColor,
-    this.totalValue,
-  }) {
+  PieChartPainter(double angleFactor,
+      this.showChartValues,
+      this.showChartValuesOutside,
+      List<Color> colorList, {
+        this.chartValueStyle,
+        this.chartValueBackgroundColor,
+        required List<double> values,
+        List<String>? titles,
+        this.showValuesInPercentage,
+        this.decimalPlaces,
+        this.showChartValueLabel,
+        this.chartType,
+        this.centerText,
+        this.centerTextStyle,
+        this.formatChartValues,
+        this.strokeWidth,
+        this.emptyColor,
+        this.gradientList,
+        this.emptyColorGradient,
+        this.degreeOptions = const DegreeOptions(),
+        required this.baseChartColor,
+        this.totalValue,
+      }) {
     // set total value
     if (totalValue == null) {
       _total = values.fold(0, (v1, v2) => v1 + v2);
@@ -67,7 +66,8 @@ class PieChartPainter extends CustomPainter {
 
     if (gradientList?.isEmpty ?? true) {
       for (int i = 0; i < values.length; i++) {
-        final paint = Paint()..color = getColor(colorList, i);
+        final paint = Paint()
+          ..color = getColor(colorList, i);
         setPaintProps(paint);
         _paintList.add(paint);
       }
@@ -99,9 +99,9 @@ class PieChartPainter extends CustomPainter {
     // e.g. (-90, 91) should start from the left
 
     final left =
-        degreeOptions.initialAngle >= -90 && degreeOptions.totalDegrees <= 180
-            ? -size.width / 2
-            : 0.0;
+    degreeOptions.initialAngle >= -90 && degreeOptions.totalDegrees <= 180
+        ? -size.width / 2
+        : 0.0;
 
     const top = 0.0;
 
@@ -110,7 +110,8 @@ class PieChartPainter extends CustomPainter {
     final useCenter = chartType == ChartType.disc ? true : false;
 
     // draw base pie chart
-    final paintBase = Paint()..color = baseChartColor;
+    final paintBase = Paint()
+      ..color = baseChartColor;
     setPaintProps(paintBase);
     canvas.drawArc(
       boundingSquare,
@@ -122,7 +123,8 @@ class PieChartPainter extends CustomPainter {
 
     // if values total is 0, then draw empty chart
     if (_total == 0) {
-      final paint = Paint()..color = emptyColor!;
+      final paint = Paint()
+        ..color = emptyColor!;
       setPaintProps(paint);
 
       canvas.drawArc(
@@ -188,7 +190,7 @@ class PieChartPainter extends CustomPainter {
           if (showChartValues) {
             final name = showValuesInPercentage == true
                 ? ('${((_subParts.elementAt(i) / _total) * 100)
-                        .toStringAsFixed(decimalPlaces!)}%')
+                .toStringAsFixed(decimalPlaces!)}%')
                 : value;
             _drawName(canvas, name, x, y, side);
           }
@@ -206,17 +208,16 @@ class PieChartPainter extends CustomPainter {
     _drawName(canvas, centerText, 0, 0, side, style: centerTextStyle);
   }
 
-  void _drawName(
-    Canvas canvas,
-    String? name,
-    double x,
-    double y,
-    double side, {
-    TextStyle? style,
-  }) {
+  void _drawName(Canvas canvas,
+      String? name,
+      double x,
+      double y,
+      double side, {
+        TextStyle? style,
+      }) {
     final span = TextSpan(
       style: style ?? chartValueStyle,
-      text: name,
+      text: replaceNumber(name ?? ""),
     );
     TextPainter tp = TextPainter(
       text: span,
@@ -251,4 +252,17 @@ class PieChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(PieChartPainter oldDelegate) =>
       oldDelegate._totalAngle != _totalAngle;
+
+  String replaceNumber(String input) {
+    try {
+      const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      const bangla = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      for (int i = 0; i < english.length; i++) {
+        input = input.replaceAll(english[i], bangla[i]);
+      }
+      return input;
+    } catch (e) {
+      return input;
+    }
+  }
 }
